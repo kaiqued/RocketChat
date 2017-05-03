@@ -50,30 +50,41 @@ class application():
     def iniciar(self):
         self.window.mainloop()
 
-app=application()
-app.iniciar()
+#app=application()
+#app.iniciar()
 
 #LOGIN E SENHA, ENTRADA
+Logins=[]
+Senhas=[]
 
 janela = Tk()
 janela.geometry("250x100+100+100")
 janela.title("JANELA TOP")
+janela["bg"]= "blue" 
 
 
-tlogin = Label(janela, text = "Login: ")
+
+tlogin = Label(janela, text = "Login: ", bg= "blue")
 tlogin.grid(row = 1, column= 1)
 
-tsenha = Label(janela, text = "Senha: ")
+tsenha = Label(janela, text = "Senha: ", bg = "blue")
 tsenha.grid(row=2, column= 1)
 
-login = Entry(janela,)
+login = Entry(janela)
 login.grid(row=1, column=2)
 
-senha = Entry (janela,)
+senha = Entry (janela)
 senha.grid(row= 2, column =2)
+Logins=[]
+Senhas=[]
+def salvaloginsenha():
+    lo=login.get()
+    se=senha.get()
+    Logins.append(lo)
+    Senhas.append(se)
 
-Entrar = Button(janela, text="Enter") 
+Entrar = Button(janela, text="Enter", bg="red",command = salvaloginsenha) 
 Entrar.grid(row=3, column=2)
 
-janela.mainloop()
 
+janela.mainloop()
