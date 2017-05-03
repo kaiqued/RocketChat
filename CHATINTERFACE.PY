@@ -50,8 +50,8 @@ class application():
     def iniciar(self):
         self.window.mainloop()
 
-#app=application()
-#app.iniciar()
+app=application()
+app.iniciar()
 
 #LOGIN E SENHA, ENTRADA
 Logins=[]
