@@ -16,7 +16,8 @@ class application():
         self.frame1.pack()
 
         self.botao1=Button(self.frame1,text="send",background="white")
-        self.botao1['font']=('Verdana','12','italic','bold')
+        self.botao1['font']=('Verdana','12','italic','bold')
+
         self.botao1['width']=10
         self.botao1['height']=2
         
@@ -52,4 +53,27 @@ class application():
 app=application()
 app.iniciar()
 
+#LOGIN E SENHA, ENTRADA
+
+janela = Tk()
+janela.geometry("250x100+100+100")
+janela.title("JANELA TOP")
+
+
+tlogin = Label(janela, text = "Login: ")
+tlogin.grid(row = 1, column= 1)
+
+tsenha = Label(janela, text = "Senha: ")
+tsenha.grid(row=2, column= 1)
+
+login = Entry(janela,)
+login.grid(row=1, column=2)
+
+senha = Entry (janela,)
+senha.grid(row= 2, column =2)
+
+Entrar = Button(janela, text="Enter") 
+Entrar.grid(row=3, column=2)
+
+janela.mainloop()
 
