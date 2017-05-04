@@ -1,4 +1,4 @@
-import tkinter as tk
+
 from tkinter import *
 
 
@@ -50,16 +50,16 @@ class application():
     def iniciar(self):
         self.window.mainloop()
 
-app=application()
-app.iniciar()
+#app=application()
+#app.iniciar()
 
 #LOGIN E SENHA, ENTRADA
-Logins=[]
-Senhas=[]
-
+Logins = []
+Senhas = []
+"""
 janela = Tk()
-janela.geometry("250x100+100+100")
-janela.title("JANELA TOP")
+janela.geometry("250x150+100+100")
+janela.title("Entrada")
 janela["bg"]= "blue" 
 
 
@@ -77,14 +77,44 @@ senha = Entry (janela)
 senha.grid(row= 2, column =2)
 Logins=[]
 Senhas=[]
+
+lb=Label(janela, text= "", bg= "blue")
+lb.grid(row= 4, column= 2)
 def salvaloginsenha():
     lo=login.get()
     se=senha.get()
-    Logins.append(lo)
-    Senhas.append(se)
-
+    if lo in Logins:
+        lb["text"] = "Este login já foi cadastrado"
+    
+    if lo not in Logins and se not in Senhas:
+        Logins.append(lo)
+        Senhas.append(se)
+        lb["text"] = "Login e senha salvas!"
+    if se not in Senhas:
+        lb["text"] = "Senha incorreta"
+    
+    
+    
+    
 Entrar = Button(janela, text="Enter", bg="red",command = salvaloginsenha) 
 Entrar.grid(row=3, column=2)
 
 
 janela.mainloop()
+
+"""
+## TELA DO APLICATIVO##
+
+
+Ta = Tk()
+Ta.geometry("500x600+40+40")
+Ta.title("Inicio")
+
+
+photo=PhotoImage(file="orange.png")
+vida=Label(Ta, image=photo)
+vida.pack()
+
+
+
+#Ta.mainloop()
