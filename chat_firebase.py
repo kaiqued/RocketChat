@@ -4,27 +4,56 @@ from sseclient import SSEClient
 import json
 import time
 
-
 FIREBASE_URL = "https://rocket-messenger.firebaseio.com/"
+fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
 
-if __name__ == "__main__":
-    print(__name__)
-    time.sleep(1)
-    fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
+class Rocket_Chat():
 
-    # Avisa que o usuário logou
-    fb.post("rocket-messenger",
-            {"name": Logins[0],
-             "message": "Joined the chat",
-             ".priority": time.time() * 1000
-            })
+    def __init__(self,login):
+        self.nome=login
 
-    # Posta mensagem do usuário
-    while (True):
-        print("\n")
+    def post(self):
+        # Avisa que o usuário logou
+        fb.post("rocket-messenger",
+                {"name": self.nome,
+                 "message": "Joined the chat",
+                 ".priority": time.time() * 1000
+                })
+
+    def send(self,mensagem):
+        self.mes=mensagem
         fb.post("rocket-messenger",
                 {
-                    "name": Logins[0],
-                    "message": texto,
+                    "name": self.nome,
+                    "message": self.mes,
                     ".priority": time.time() * 1000
                 })
+
+
+
+def receive():
+    reading = fb.get("https://rocket-messenger.firebaseio.com/","rocket-messenger")
+    return reading
+
+
+
+
+'''
+#testes
+username = input("Input your username: ")
+
+user=Rocket_Chat(username)
+
+user.post()
+
+user.send()
+
+#resgata a conversa
+reading=receive()
+for x in reading:
+    mensagem=reading[x]["message"]
+    pessoa=reading[x]["name"]
+    txt=("{0}: {1}\n".format(pessoa,mensagem))
+    label.insert(END,txt, 'bold_italics') 
+    
+'''
