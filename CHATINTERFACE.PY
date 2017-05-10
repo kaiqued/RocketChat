@@ -72,14 +72,13 @@ def Enter_pressed(event):
     scroll.pack(side=RIGHT, fill=Y)        
     input_user.set('')
     
-    label.tag_configure('bold_italics', font=('Arial', 12, 'bold', 'italic'))
+    label.tag_configure('bold_italics', font=('Arial', 20, 'bold', 'italic'))
     label.tag_configure('big', font=('Verdana', 20, 'bold'))
-    label.tag_configure('color', foreground='#476042', font=('tempus Sans ITC', 12, 'bold'))
-    label.tag_bind('follow', '<1>', lambda e, t=label: t.insert(END, "Not now, maybe later!"))
+    label.tag_configure('color', foreground='gray', font=('tempus Sans ITC', 12, 'bold'))
+    label.insert(END,texto, 'bold_italics') 
     
+    label.pack(side=BOTTOM)
     
-    label.pack(side=TOP)
-    label.insert(END,texto)
     
     return "break"
 
@@ -104,12 +103,12 @@ p1.add(scrollbar)"""
 frame = Frame(Tmenu, width=1, height=1)
 
 
+""""
+NOTA PARA GABRIEL:
+--> Logins[0] é o nome do usuario;
 
-
-
-
-
-
+--> texto é a mensagem enviada
+"""
 
 
 frame.pack()
