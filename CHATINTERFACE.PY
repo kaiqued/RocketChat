@@ -1,6 +1,5 @@
 from tkinter import *
 import os
-
 clear=lambda:os.system('cls')
 
 
@@ -24,28 +23,27 @@ username = Entry(janela)
 username.grid(row=1, column=2)
 
 
-Logins=[]
+
+
 
 
 lb=Label(janela, text= "", bg= "blue")
 lb.grid(row= 4, column= 2)
 
+
+
 def salvaloginsenha():
-    lo=username.get()
-    return lo
-    
-   
-def close_window(): 
+    login=username.get()
+    print(login)   
     janela.destroy()
-
-     
-
+    return 
    
 
+        
    
+
 
 Entrar = Button(janela, text="Enter", bg="red",command=salvaloginsenha) 
-Entrar = Button(janela, text="Enter", bg="red",command=close_window)
 Entrar.grid(row=3, column=2)
 
 janela.mainloop()
@@ -55,27 +53,47 @@ janela.mainloop()
 Tmenu = Tk()
 Tmenu.geometry("500x600+40+40")
 Tmenu.title("Rocket Chat")
-
+#criando painel
+p = PanedWindow(orient=HORIZONTAL)
+p.pack(anchor=CENTER, fill=X)
 input_user = StringVar()
 input_field = Entry(Tmenu, text=input_user)
-input_field.pack(side=BOTTOM,fill=X)
+p.add(input_field)
+
+scroll=Scrollbar(Tmenu)
+label = Text(Tmenu,height=500,width=500)
+
 def Enter_pressed(event):
     input_get = input_field.get()
-    print(input_get)
-    label = Label(Tmenu, text=input_get)
-    input_user.set('')
-    label.pack()
+    scroll.config(command=label.yview)
+    label.configure(yscrollcommand=scroll.set)
+    scroll.pack(side=RIGHT, fill=Y)        
+    input_user.set('\n')
+    label.pack(side=TOP)
+    label.insert(END,input_get)
+   
     return "break"
 
 
 
-
-
-frame = Frame(Tmenu, width=300, height=300)
 input_field.bind("<Return>", Enter_pressed)
+
+#criando o painélel
+"""p1 = PanedWindow(orient=VERTICAL)
+p1.pack(side=RIGHT, fill=Y)
+scrollbar = Scrollbar(Tmenu)
+scrollbar=.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=Text.yview)
+scrollbar.pack(side=RIGHT, fill=Y)
+p1.add(scrollbar)"""
+
+
+frame = Frame(Tmenu, width=1, height=1)
+
+
+
+
+
+
 frame.pack()
-
 Tmenu.mainloop()
-
-
- 
