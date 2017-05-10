@@ -7,19 +7,19 @@ clear=lambda:os.system('cls')
 Logins = []
 
 
-janela = Tk()
-janela.geometry("250x150+100+100")
-janela.title("Entrada")
-janela["bg"]= "blue"
+Tinicio = Tk()
+Tinicio.geometry("300x100+100+100")
+Tinicio.title("Entrada")
+Tinicio["bg"]= "blue"
 
 
 
-tusername = Label(janela, text = "Username: ", bg= "blue")
+tusername = Label(Tinicio, text = "Username: ", bg= "blue")
 tusername.grid(row = 1, column= 1)
 
 
 
-username = Entry(janela)
+username = Entry(Tinicio)
 username.grid(row=1, column=2)
 
 
@@ -27,56 +27,69 @@ username.grid(row=1, column=2)
 
 
 
-lb=Label(janela, text= "", bg= "blue")
+lb=Label(Tinicio, text= "", bg= "blue")
 lb.grid(row= 4, column= 2)
 
 
 
 def salvaloginsenha():
     login=username.get()
-    print(login)   
-    janela.destroy()
-    return 
-   
-
-        
-   
+    login=username.get()
+    Logins.append(login)   
+    Tinicio.destroy()
+    return
 
 
-Entrar = Button(janela, text="Enter", bg="red",command=salvaloginsenha) 
+
+
+
+Entrar = Button(Tinicio, text="Enter", bg="red",command=salvaloginsenha) 
 Entrar.grid(row=3, column=2)
 
-janela.mainloop()
+Tinicio.mainloop()
 
 
 #aplicativo
 Tmenu = Tk()
 Tmenu.geometry("500x600+40+40")
 Tmenu.title("Rocket Chat")
+Tmenu["bg"] = "gray"
 #criando painel
 p = PanedWindow(orient=HORIZONTAL)
 p.pack(anchor=CENTER, fill=X)
 input_user = StringVar()
 input_field = Entry(Tmenu, text=input_user)
-p.add(input_field)
-
+input_field.pack( side=BOTTOM, fill=X)
 scroll=Scrollbar(Tmenu)
-label = Text(Tmenu,height=500,width=500)
+label = Text(Tmenu,height=500,width=500, bg= "gray")
 
 def Enter_pressed(event):
     input_get = input_field.get()
+    
+    texto = "{0}: {1}  \n".format(Logins[0], input_get)
     scroll.config(command=label.yview)
     label.configure(yscrollcommand=scroll.set)
     scroll.pack(side=RIGHT, fill=Y)        
-    input_user.set('\n')
+    input_user.set('')
+    
+    label.tag_configure('bold_italics', font=('Arial', 12, 'bold', 'italic'))
+    label.tag_configure('big', font=('Verdana', 20, 'bold'))
+    label.tag_configure('color', foreground='#476042', font=('tempus Sans ITC', 12, 'bold'))
+    label.tag_bind('follow', '<1>', lambda e, t=label: t.insert(END, "Not now, maybe later!"))
+    
+    
     label.pack(side=TOP)
-    label.insert(END,input_get)
-   
+    label.insert(END,texto)
+    
     return "break"
 
 
 
 input_field.bind("<Return>", Enter_pressed)
+
+
+TextoInicio = Label(Tmenu, text = "Bem vindo ao Rocket Chat", bg = "blue")
+TextoInicio.pack(side = TOP, fill= X)
 
 #criando o painélel
 """p1 = PanedWindow(orient=VERTICAL)
@@ -89,6 +102,10 @@ p1.add(scrollbar)"""
 
 
 frame = Frame(Tmenu, width=1, height=1)
+
+
+
+
 
 
 
