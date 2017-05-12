@@ -1,19 +1,90 @@
 
 from tkinter import *
 import os
-from chat_firebase import Rocket_Chat , receive
+from chat_firebase import Rocket_Chat, receive
+from firebase import firebase
 
 clear=lambda:os.system('cls')
 
+FIREBASE_URL = "https://rocket-messenger.firebaseio.com/"
+fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
 
 
-def close_window():   
-    login=username.get()
-    Logins.append(login)
-    Tinicio.destroy()
+###   TELA INICIAL DE LOGIN   ###
+
+Logins = []
+#  CRIA A JANELA  #
+Tinicio = Tk()
+Tinicio.geometry("325x125+100+100")
+Tinicio.title("Entrada")
+Tinicio["bg"]= "light blue"
+
+#  DEFINE AS FUNÇÕES  #
+def salva_login_senha():   
+    nome = username.get()
+    senha = password.get()
+    Logins.append(nome)
+    Logins.append(senha)
+    lb["fg"]="green"
+    lb["text"]="Login e senha salvos!"
+    
+def checa_login_senha():
+    login = username.get()
+    secret = password.get()
+    saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+    
+    for lg in saves:
+        name=saves[lg]["name"]
+        senha=saves[lg]["password"]
+        if name==login and secret==senha:
+            Tinicio.destroy()
+        
+    lb["fg"]="red"
+    lb["text"]="Login não existe!"
+
+## TELA INICIO ##
+
+#  DEFINE OS WIDGETS  #
+
+lb = Label(Tinicio, text= "", bg= "light blue")
+tusername = Label(Tinicio, text = "Username: ", fg= "black", bg= "light blue")
+tpassword = Label(Tinicio, text = "Senha: ", fg= "black", bg= "light blue")
+BoasVindas = Label(Tinicio, text="Seja bem-vindo ao Rocket Chat!", bg="light blue", width=24)
+username = Entry(Tinicio, width = 24)
+password = Entry(Tinicio, width = 24)
+Criar = Button(Tinicio, text="Criar", bg="red",command=salva_login_senha, width=9)
+Entrar = Button(Tinicio, text="Enter", bg="red",command=checa_login_senha,width=9)
+
+#  POSICIONA OS WIDGETS  #
+
+lb.grid(row= 5, column= 1)
+tusername.grid(row= 1, column= 0,sticky=E)
+tpassword.grid(row= 2, column= 0,sticky=E)
+BoasVindas.grid(row= 0, column= 1)
+username.grid(row= 1, column= 1)
+password.grid(row= 2, column= 1)
+Criar.grid(row=4, column=1,sticky=E)
+Entrar.grid(row=4, column=1,sticky=W)
+
+Tinicio.mainloop()
+
+#user=Rocket_Chat(Logins[0],Logins[1])
+#user.post()
+
+
+## TELA CRIAR CONTA ##
 
 
 
+###  TELA DO CHAT  ###
+
+#  CRIA A TELA  #
+Tmenu = Tk()
+Tmenu.geometry("500x600+40+40")
+Tmenu.title("Rocket Chat")
+Tmenu["bg"] = "gray"
+
+#  CONFIGURA AS FUNÇÕES  #
 
 def Enter_pressed(event):
     input_get = input_field.get()
@@ -23,92 +94,38 @@ def Enter_pressed(event):
     label.configure(yscrollcommand=scroll.set)
     scroll.pack(side=RIGHT, fill=Y)        
     input_user.set('')
-    
-    label.tag_configure('bold_italics', font=('Arial', 20, 'bold', 'italic'))
-    label.tag_configure('big', font=('Verdana', 20, 'bold'))
-    label.tag_configure('color', foreground='gray', font=('tempus Sans ITC', 12, 'bold'))
     label.insert(END,texto, 'bold_italics') 
     
     label.pack(side=BOTTOM)
     
-    
     return "break"
 
-
-
-
-#LOGIN E SENHA, ENTRADA
-Logins = []
-
-
-Tinicio = Tk()
-Tinicio.geometry("300x100+100+100")
-Tinicio.title("Entrada")
-Tinicio["bg"]= "blue"
-
-
-tusername = Label(Tinicio, text = "Username: ", bg= "blue")
-tusername.grid(row = 1, column= 1)
-
-
-username = Entry(Tinicio)
-username.grid(row=1, column=2)
-
-
-
-lb=Label(Tinicio, text= "", bg= "blue")
-lb.grid(row= 4, column= 2)
-
-
-
-Entrar = Button(Tinicio, text="Enter", bg="red",command=close_window)
-Entrar.grid(row=3, column=2)
-
-Tinicio.mainloop()
-
-user=Rocket_Chat(Logins[0])
-user.post()
-
-#aplicativo
-Tmenu = Tk()
-Tmenu.geometry("500x600+40+40")
-Tmenu.title("Rocket Chat")
-Tmenu["bg"] = "gray"
-#criando painel
+#  CRIA OS WIDGETS  #
 p = PanedWindow(orient=HORIZONTAL)
-p.pack(anchor=CENTER, fill=X)
 input_user = StringVar()
 input_field = Entry(Tmenu, text=input_user)
-input_field.pack( side=BOTTOM, fill=X)
-scroll=Scrollbar(Tmenu)
 label = Text(Tmenu,height=500,width=500, bg= "gray")
-
-
-input_field.bind("<Return>", Enter_pressed)
-
-
-TextoInicio = Label(Tmenu, text = "Bem vindo ao Rocket Chat", bg = "blue")
-TextoInicio.pack(side = TOP, fill= X)
-
-#criando o painélel
-"""p1 = PanedWindow(orient=VERTICAL)
-p1.pack(side=RIGHT, fill=Y)
-scrollbar = Scrollbar(Tmenu)
-scrollbar=.config(yscrollcommand=scrollbar.set)
-scrollbar.config(command=Text.yview)
-scrollbar.pack(side=RIGHT, fill=Y)
-p1.add(scrollbar)"""
-
-
+TextoInicio = Label(Tmenu, text = "Bem vindo ao Rocket Chat", bg = "light blue")
+scroll=Scrollbar(Tmenu)
 frame = Frame(Tmenu, width=1, height=1)
 
+#  POSICIONA OS WIDGETS  #
 
-""""
-NOTA PARA GABRIEL:
---> Logins[0] é o nome do usuario;
---> texto é a mensagem enviada
-"""
-
-
+p.pack(anchor=CENTER, fill=X)
+input_field.bind("<Return>", Enter_pressed)
+input_field.pack( side=BOTTOM, fill=X)
+TextoInicio.pack(side = TOP, fill= X)
 frame.pack()
+#  CONFIGURA O TEXTO QUE ENTRA NO CHAT  #
+
+label.tag_configure('bold_italics', font=('Arial', 15, 'italic'))
+label.tag_configure('big', font=('Verdana', 20, 'bold'))
+label.tag_configure('color', foreground='gray', font=('tempus Sans ITC', 12, 'bold'))
+
+
+
+
+
+
+
 Tmenu.mainloop()
