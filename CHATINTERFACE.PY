@@ -20,13 +20,46 @@ Tinicio.title("Entrada")
 Tinicio["bg"]= "light blue"
 
 #  DEFINE AS FUNÇÕES  #
-def salva_login_senha():   
-    nome = username.get()
-    senha = password.get()
-    Logins.append(nome)
-    Logins.append(senha)
-    lb["fg"]="green"
-    lb["text"]="Login e senha salvos!"
+
+"""CRIEI DUAS FUNÇÕES, A PRIMEIRA CRIA A JANELA E A SEGUNDA SALVA E FECHA A JANELA"""
+
+
+
+
+
+def tela_criar_login_senha():   
+    Tcriar = Tk()
+    Tcriar.geometry("350x125+100+100")
+    Tcriar.title("Criar login e senha")
+    Tcriar["bg"]= "orange"
+    
+    
+    def salva_login_senha():   
+        nome = username.get()
+        senha = password.get()
+        Logins.append(nome)
+        Logins.append(senha)
+        lb["fg"]="green"
+        lb["text"]="Login e senha salvos!"
+        Tcriar.destroy()
+        
+        
+        
+    tusername = Label(Tcriar, text = "Username: ", fg= "black", bg= "orange")
+    tpassword = Label(Tcriar, text = "Senha: ", fg= "black", bg= "orange")
+    BoasVindas = Label(Tcriar, text="Escolha qual vai ser seu login e senha", bg="orange")
+    username = Entry(Tcriar, width = 24)
+    password = Entry(Tcriar, width = 24)
+    Salvar = Button(Tcriar, text="Salvar", bg="red",command=salva_login_senha, width=9)
+    
+    tusername.grid(row= 1, column= 0,sticky=E)
+    tpassword.grid(row= 2, column= 0,sticky=E)
+    BoasVindas.grid(row= 0, column= 1)
+    username.grid(row= 1, column= 1)
+    password.grid(row= 2, column= 1)
+    Salvar.grid(row=3, column=1)
+    Tcriar.mainloop()
+    
     
 def checa_login_senha():
     login = username.get()
@@ -52,7 +85,7 @@ tpassword = Label(Tinicio, text = "Senha: ", fg= "black", bg= "light blue")
 BoasVindas = Label(Tinicio, text="Seja bem-vindo ao Rocket Chat!", bg="light blue", width=24)
 username = Entry(Tinicio, width = 24)
 password = Entry(Tinicio, width = 24)
-Criar = Button(Tinicio, text="Criar", bg="red",command=salva_login_senha, width=9)
+Criar = Button(Tinicio, text="Criar", bg="red",command=tela_criar_login_senha, width=9)
 Entrar = Button(Tinicio, text="Enter", bg="red",command=checa_login_senha,width=9)
 
 #  POSICIONA OS WIDGETS  #
