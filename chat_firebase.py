@@ -12,6 +12,9 @@ class Rocket_Chat():
     def __init__(self,login,password):
         self.nome=login
         self.senha=password
+
+
+    def salva_data(self):    
         fb.post("data",
                 {"name": self.nome,
                  "password": self.senha
@@ -39,18 +42,7 @@ def receive():
     reading = fb.get("https://rocket-messenger.firebaseio.com/","rocket-messenger")
     return reading
 
-def checa_login_senha():
-	login = username.get()
-	senha = password.get()
-	saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
-	for lg in data:
-		name=saves[lg]["name"]
-		password=saves[lg]["password"]
-		if name==login and password==senha:
-			Tinicio.destroy()
-		else:
-			lb["fg"]="red"
-			lb["text"]="Login não existe!"
+
 
 
 
@@ -73,3 +65,4 @@ for x in reading:
     label.insert(END,txt, 'bold_italics') 
     
 '''
+
