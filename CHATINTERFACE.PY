@@ -6,7 +6,6 @@ from firebase import firebase
 clear=lambda:os.system('cls')
 Logins = []
 import PIL
-y=0
 FIREBASE_URL = "https://rocket-messenger.firebaseio.com/"
 fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
 
@@ -93,7 +92,7 @@ def checa_login_senha():
         name=saves[lg]["name"]
         senha=saves[lg]["password"]
         if name==login and secret==senha:
-            Logins.append(login)
+            Logins.append(login) 
             Logins.append(secret)
             Tinicio.destroy()
 
@@ -151,13 +150,15 @@ for x in reading:
 
 def batata(event):
 
-    label.delete('1.0', END)
+    label.delete('1.0', END) 
     reading=receive()
+    
     for x in reading:
         mensagem=reading[x]["message"]
         pessoa=reading[x]["name"]
         t0t=("{0}: {1}\n".format(pessoa,mensagem))
         label.insert(END,t0t, 'bold_italics') 
+    label.see("end")
     input_get = input_field.get()
     user.send(input_get)
     texto = "{0}: {1}  \n".format(user.nome, input_get)
@@ -187,17 +188,26 @@ frame = Frame(Tmenu, width=1, height=1)
 
 
 
-
+def hehe():
+    label.delete('1.0', END) 
+    reading=receive()
     
+    for x in reading:
+        mensagem=reading[x]["message"]
+        pessoa=reading[x]["name"]
+        t0t=("{0}: {1}\n".format(pessoa,mensagem))
+        label.insert(END,t0t, 'bold_italics') 
+    label.see("end")
+    Tmenu.after(20, hehe)
+    return 0
 #  POSICIONA OS WIDGETS  #
 
 p.pack(anchor=CENTER, fill=X)
 input_field.bind("<Return>", batata)
 input_field.pack( side=BOTTOM, fill=X)
-print(y)
-y+=1
 TextoInicio.pack(side = TOP, fill= X)
 frame.pack()
+Tmenu.after(2000, hehe)
 #  CONFIGURA O TEXTO QUE ENTRA NO CHAT  #
 
 label.tag_configure('bold_italics', font=('Arial', 15, 'italic'))
