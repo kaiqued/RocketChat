@@ -1,6 +1,9 @@
+
 from tkinter import *
 import os
+"""
 from chat_firebase import Rocket_Chat, receive
+
 from firebase import firebase
 
 clear=lambda:os.system('cls')
@@ -8,6 +11,7 @@ Logins = []
 import PIL
 FIREBASE_URL = "https://rocket-messenger.firebaseio.com/"
 fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
+
 
 class inicio:
     def __init__(self):
@@ -86,11 +90,11 @@ def salva_login_senha():
 def checa_login_senha():
     login = username.get()
     secret = password.get()
-    saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+    #saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
     
     for lg in saves:
-        name=saves[lg]["name"]
-        senha=saves[lg]["password"]
+        #name=saves[lg]["name"]
+        #senha=saves[lg]["password"]
         if name==login and secret==senha:
             Logins.append(login) 
             Logins.append(secret)
@@ -124,6 +128,28 @@ Entrar.grid(row=4, column=1,sticky=W)
 
 Tinicio.mainloop()
 
+"""
+
+### MENU ###
+Tassunto = Tk()
+Tassunto.geometry("500x600+40+40")
+Tassunto.title("Rocket Chat")
+Tassunto["bg"] = "blue"
+TextoInicio = Label (Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
+def assunto():
+    Tassunto.destroy()
+    
+#TextoInicio = Text(Tassunto, text = "Escolha a sala que deseje entrar,seu cuzão",bg = "black")
+Button(Tassunto, text='Futebol', command=assunto,width=9).pack(anchor="center")
+Button(Tassunto, text='Politica', command=assunto,width=9).pack(anchor="center")
+Button(Tassunto, text='Celebridades', command=assunto,width=9).pack(anchor="center")
+Button(Tassunto, text='Vôlei', command=assunto,width=9).pack(anchor="center")
+Button(Tassunto, text='Tecnologia', command=assunto,width=9).pack(anchor="center")
+Button(Tassunto, text='Culinária', command=assunto,width=9).pack(anchor="center")
+Tassunto.mainloop()
+
+
+
 
 
 
@@ -131,12 +157,14 @@ Tinicio.mainloop()
 
 ###  TELA DO CHAT  ###
 
+
 #  CRIA A TELA  #
+from tkinter.colorchooser import *
 Tmenu = Tk()
 Tmenu.geometry("500x600+40+40")
 Tmenu.title("Rocket Chat")
 Tmenu["bg"] = "gray"
-label = Text(Tmenu,height=500,width=500, bg= "gray")
+
 '''
 reading=receive()
 for x in reading:
@@ -147,12 +175,19 @@ for x in reading:
 '''
 
 #  CONFIGURA AS FUNÇÕES  #
+def getColor():
+    color = askcolor()
+    (y,x) = color
+    Tmenu["bg"]=x
+    
 
+Button(Tmenu, text='Select Color', command=getColor).pack(anchor=NE)
+
+    
 def batata(event):
 
     label.delete('1.0', END) 
     reading=receive()
-    
     for x in reading:
         mensagem=reading[x]["message"]
         pessoa=reading[x]["name"]
