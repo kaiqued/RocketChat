@@ -1,7 +1,7 @@
-
 from tkinter import *
+
 import os
-"""
+
 from chat_firebase import Rocket_Chat, receive
 
 from firebase import firebase
@@ -12,8 +12,12 @@ import PIL
 FIREBASE_URL = "https://rocket-messenger.firebaseio.com/"
 fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
 
+from tkinter.colorchooser import *
 
-class inicio:
+
+##  CLASSE CRIAR LOGIN  ##
+
+class Criar:
     def __init__(self):
         self.inicial = Tk()
         self.inicial.title("Início")
@@ -82,28 +86,32 @@ Tinicio["bg"]= "light blue"
 
 #  DEFINE AS FUNÇÕES  #
 def salva_login_senha():   
-    app = inicio()
-    
+    app = Criar()
     app.inicia()
     
 
 def checa_login_senha():
     login = username.get()
     secret = password.get()
-    #saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+    saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
     
     for lg in saves:
-        #name=saves[lg]["name"]
-        #senha=saves[lg]["password"]
+        name=saves[lg]["name"]
+        senha=saves[lg]["password"]
         if name==login and secret==senha:
             Logins.append(login) 
             Logins.append(secret)
-            Tinicio.destroy()
-
-    #erro da quando ele acha o login, pq ai a janela fecha e o codigo roda isso aqui, so q a janlea nao ta mais aberta->pensar num else   
-    lb["fg"]="red"
-    lb["text"]="Login não existe!"
-
+            try:
+                Tinicio.destroy()
+            except:
+                print("erro 1")
+        
+        else:
+            try:
+                lb["fg"]="red"
+                lb["text"]="Login ou Senha não existe!"
+            except:
+                print("erro    2")
 #  DEFINE OS WIDGETS  #
 
 lb = Label(Tinicio, text= "", bg= "light blue")
@@ -128,13 +136,13 @@ Entrar.grid(row=4, column=1,sticky=W)
 
 Tinicio.mainloop()
 
-"""
+
 
 ### MENU ###
 Tassunto = Tk()
-Tassunto.geometry("500x600+40+40")
-Tassunto.title("Rocket Chat")
-Tassunto["bg"] = "blue"
+Tassunto.geometry("+40+40")
+Tassunto.title("Menu de Assuntos")
+Tassunto["bg"] = "light green"
 TextoInicio = Label (Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
 def assunto():
     Tassunto.destroy()
@@ -159,101 +167,108 @@ Tassunto.mainloop()
 
 
 #  CRIA A TELA  #
-from tkinter.colorchooser import *
-Tmenu = Tk()
-Tmenu.geometry("500x600+40+40")
-Tmenu.title("Rocket Chat")
-Tmenu["bg"] = "gray"
 
-'''
-reading=receive()
-for x in reading:
-    mensagem=reading[x]["message"]
-    pessoa=reading[x]["name"]
-    t0t=("{0}: {1}\n".format(pessoa,mensagem))
-    label.insert(END,t0t, 'bold_italics') 
-'''
-
-#  CONFIGURA AS FUNÇÕES  #
-def getColor():
-    color = askcolor()
-    (y,x) = color
-    Tmenu["bg"]=x
-    
-
-Button(Tmenu, text='Select Color', command=getColor).pack(anchor=NE)
-
-    
-def batata(event):
-
-    label.delete('1.0', END) 
-    reading=receive()
-    for x in reading:
-        mensagem=reading[x]["message"]
-        pessoa=reading[x]["name"]
-        t0t=("{0}: {1}\n".format(pessoa,mensagem))
-        label.insert(END,t0t, 'bold_italics') 
-    label.see("end")
-    input_get = input_field.get()
-    user.send(input_get)
-    texto = "{0}: {1}  \n".format(user.nome, input_get)
-    scroll.config(command=label.yview)
-    label.configure(yscrollcommand=scroll.set)
-    scroll.pack(side=RIGHT, fill=Y)        
-    input_user.set('')
-    label.insert(END,texto, 'bold_italics') 
-    label.pack(side=BOTTOM)
+class Chat(Rocket_Chat) :
+    def __init__(self, Logins):
+        self.Chat = Tk()
+        self.Chat.title("Rocket Chat")
+        self.Chat.geometry("500x600+40+40")
+        self.Chat['bg'] = 'gray'
+        user.post()
+        
+        
+        ## Widgets ##
+        self.opcoes = Frame(self.Chat, bg= "light blue")
+        self.opcoes.pack(fill=BOTH)
+        
+        self.input_user = StringVar()
+        self.input_field = Entry(self.Chat, text=self.input_user)
+        reading=receive()
+        self.TextoInicio = Label(self.opcoes, text = "Bem vindo ao Rocket Chat", bg = "light blue")
+        self.scroll=Scrollbar(self.Chat)
+        self.label = Text(self.Chat,height=200,width=200, bg= "gray")
+        self.exit = Button(self.opcoes, text = "Fugir", command = self.sair, bg= "grey")
+        self.cor = Button(self.opcoes, text='Select Color', command=self.getColor)
+        
+        
+        
+        
+        ## Coloca na tela ##
+        
+        self.exit.pack(side = RIGHT)
+        self.TextoInicio.pack(side= LEFT)
+        self.input_field.pack(side=BOTTOM, fill=X)
+        self.label.pack()
+        self.input_field.bind("<Return>", self.Envia)
+        self.cor.pack()
+        
+        
+        self.Chat.after(2000, self.atualiza)
     
     
-
-    return "break"
-
-#  CRIA OS WIDGETS  #
-user=Rocket_Chat(Logins[0],Logins[1])
-user.post()
-p = PanedWindow(orient=HORIZONTAL)
-input_user = StringVar()
-input_field = Entry(Tmenu, text=input_user)
-
-reading=receive()
-
-TextoInicio = Label(Tmenu, text = "Bem vindo ao Rocket Chat", bg = "light blue")
-scroll=Scrollbar(Tmenu)
-frame = Frame(Tmenu, width=1, height=1)
-
-
-
-def hehe():
-    label.delete('1.0', END) 
-    reading=receive()
+    def getColor(self):
+        color = askcolor()
+        (y,x) = color
+        self.label["bg"]=x
+        self.Chat["bg"]= x
+        
     
-    for x in reading:
-        mensagem=reading[x]["message"]
-        pessoa=reading[x]["name"]
-        t0t=("{0}: {1}\n".format(pessoa,mensagem))
-        label.insert(END,t0t, 'bold_italics') 
-    label.see("end")
-    Tmenu.after(20, hehe)
-    return 0
-#  POSICIONA OS WIDGETS  #
+    
+    
+    
+    
+    
+    def Envia(self,event):
 
-p.pack(anchor=CENTER, fill=X)
-input_field.bind("<Return>", batata)
-input_field.pack( side=BOTTOM, fill=X)
-TextoInicio.pack(side = TOP, fill= X)
-frame.pack()
-Tmenu.after(2000, hehe)
-#  CONFIGURA O TEXTO QUE ENTRA NO CHAT  #
+        self.label.delete('1.0', END) 
+        reading=receive()
+        
+        for x in reading:
+            mensagem=reading[x]["message"]
+            pessoa=reading[x]["name"]
+            t0t=("{0}: {1}\n".format(pessoa,mensagem))
+            self.label.insert(END,t0t, 'bold_italics') 
+        self.label.see("end")
+        self.input_get = self.input_field.get()
+        
+        user.send(self.input_get)
+        self.texto = "{0}: {1}  \n".format(user.nome, self.input_get)
+        self.scroll.config(command=self.label.yview)
+        self.label.configure(yscrollcommand=self.scroll.set)
+        self.scroll.pack(side=RIGHT, fill=Y)        
+        self.input_user.set('')
+        self.label.insert(END,self.texto, 'bold_italics') 
+        self.label.pack(side=BOTTOM)
+    
+    
 
-label.tag_configure('bold_italics', font=('Arial', 15, 'italic'))
-label.tag_configure('big', font=('Verdana', 20, 'bold'))
-label.tag_configure('color', foreground='gray', font=('tempus Sans ITC', 12, 'bold'))
+        return "break"
 
+    def atualiza(self):
+        self.label.delete('1.0', END) 
+        reading=receive()
+        
+        for x in reading:
+            mensagem=reading[x]["message"]
+            pessoa=reading[x]["name"]
+            t0t=("{0}: {1}\n".format(pessoa,mensagem))
+            self.label.insert(END,t0t, 'bold_italics') 
+        self.label.see("end")
+        self.Chat.after(20, self.atualiza)
+        return 0
 
-
-
-
-
-
-Tmenu.mainloop()
-
+    
+    
+    def sair(self):
+        self.acaba()
+    
+    
+    
+    
+    def inicia(self):
+        self.Chat.mainloop()
+    
+    
+    def acaba(self):
+        self.Chat.destroy()
+        
