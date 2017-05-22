@@ -140,6 +140,7 @@ class Criar(Rocket_Chat):
         self.Nome = Entry(self.inicial, width = 24)
         self.Senha = Entry(self.inicial, width = 24)
         Salvar = Button(self.inicial, text="Salvar", bg="red",command=self.salva, width=9)
+        self.inicial.bind("<Return>", self.salva)
         
         tusername.grid(row= 1, column= 0,sticky=E)
         tpassword.grid(row= 2, column= 0,sticky=E)
@@ -151,7 +152,7 @@ class Criar(Rocket_Chat):
         senha = self.Senha.get()
 
         
-    def salva(self):   
+    def salva(self,event):   
         nome = self.Nome.get()
         senha = self.Senha.get()
         Logins.append(nome)
@@ -226,7 +227,7 @@ class Tlogin(Criar, Chat):
         self.Criar = Button(self.Tlogin, text="Criar", bg="light green",command=self.salva_login_senha, width=9)
         self.Entrar = Button(self.Tlogin, text="Enter", bg="light green",command=self.checa_login_senha,width=9)
         self.lb = Label(self.Tlogin, text= "", bg= "light blue")
-        
+        self.Tlogin.bind("<Return>", self.checa_login_senha)
         
         self.lb.grid(row= 5, column= 1)
         self.tusername.grid(row= 1, column= 0,sticky=E)
@@ -243,7 +244,7 @@ class Tlogin(Criar, Chat):
         app.inicia()
         
     
-    def checa_login_senha(self):
+    def checa_login_senha(self, event):
         login = self.username.get()
         secret = self.password.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
