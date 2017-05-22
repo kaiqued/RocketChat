@@ -71,7 +71,7 @@ class Chat(Rocket_Chat) :
     
     
     def Envia(self,event):
-
+        user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
         reading=receive()
         
