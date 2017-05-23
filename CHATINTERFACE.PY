@@ -140,7 +140,7 @@ class Criar(Rocket_Chat):
         self.Nome = Entry(self.inicial, width = 24)
         self.Senha = Entry(self.inicial, width = 24)
         Salvar = Button(self.inicial, text="Salvar", bg="red",command=self.salva, width=9)
-        self.inicial.bind("<Return>", self.salva)
+        self.inicial.bind("<Return>", self.Enter)
         
         tusername.grid(row= 1, column= 0,sticky=E)
         tpassword.grid(row= 2, column= 0,sticky=E)
@@ -152,7 +152,7 @@ class Criar(Rocket_Chat):
         senha = self.Senha.get()
 
         
-    def salva(self,event):   
+    def salva(self):   
         nome = self.Nome.get()
         senha = self.Senha.get()
         Logins.append(nome)
@@ -164,8 +164,16 @@ class Criar(Rocket_Chat):
         self.acaba()
     
         
-    def clica(self):
-        pass
+    def Enter(self,event):
+        nome = self.Nome.get()
+        senha = self.Senha.get()
+        Logins.append(nome)
+        Logins.append(senha)
+        user=Rocket_Chat(Logins[0],Logins[1])
+        user.salva_data()
+        log.lb["fg"]="green"
+        log.lb["text"]="Login e senha salvos!"
+        self.acaba()
         
         
     
@@ -186,12 +194,12 @@ class Menu():
         self.Tassunto.title("Menu de Assuntos")
         self.Tassunto["bg"] = "light green"
         self.TextoInicio = Label (self.Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
-        self.Futebol= Button(self.Tassunto, text='Futebol', command=self.assunto,width=9).pack(anchor="center")
-        self.Politica= Button(self.Tassunto, text='Politica', command=self.assunto,width=9).pack(anchor="center")
-        self.Celebridades= Button(self.Tassunto, text='Celebridades', command=self.assunto,width=9).pack(anchor="center")
-        self.Volei= Button(self.Tassunto, text='Vôlei', command=self.assunto,width=9).pack(anchor="center")
-        self.Tecnologia= Button(self.Tassunto, text='Tecnologia', command=self.assunto,width=9).pack(anchor="center")
-        self.Culinaria= Button(self.Tassunto, text='Culinária', command=self.assunto,width=9).pack(anchor="center")
+        self.Futebol= Button(self.Tassunto,bd=10, text='Futebol', command=self.assunto,width=9).pack(anchor="center")
+        self.Politica= Button(self.Tassunto,bd=20, text='Politica', command=self.assunto,width=9).pack(anchor="center")
+        self.Celebridades= Button(self.Tassunto,bd=30, text='Celebridades', command=self.assunto,width=9).pack(anchor="center")
+        self.Volei= Button(self.Tassunto,bd=25, text='Vôlei', command=self.assunto,width=9).pack(anchor="center")
+        self.Tecnologia= Button(self.Tassunto,bd=15, text='Tecnologia', command=self.assunto,width=9).pack(anchor="center")
+        self.Culinaria= Button(self.Tassunto,bd=5, text='Culinária', command=self.assunto,width=9).pack(anchor="center")
 
         
         
@@ -227,7 +235,7 @@ class Tlogin(Criar, Chat):
         self.Criar = Button(self.Tlogin, text="Criar", bg="light green",command=self.salva_login_senha, width=9)
         self.Entrar = Button(self.Tlogin, text="Enter", bg="light green",command=self.checa_login_senha,width=9)
         self.lb = Label(self.Tlogin, text= "", bg= "light blue")
-        self.Tlogin.bind("<Return>", self.checa_login_senha)
+        self.Tlogin.bind("<Return>", self.Enter)
         
         self.lb.grid(row= 5, column= 1)
         self.tusername.grid(row= 1, column= 0,sticky=E)
@@ -244,7 +252,7 @@ class Tlogin(Criar, Chat):
         app.inicia()
         
     
-    def checa_login_senha(self, event):
+    def Enter(self, event):
         login = self.username.get()
         secret = self.password.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
@@ -265,6 +273,29 @@ class Tlogin(Criar, Chat):
                     self.lb["text"]="Login ou Senha não existe!"
                 except:
                     print("erro    2")
+                    
+    def checa_login_senha(self):
+        login = self.username.get()
+        secret = self.password.get()
+        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+        
+        for lg in saves:
+            name=saves[lg]["name"]
+            senha=saves[lg]["password"]
+            if name==login and secret==senha:
+                Logins.append(login) 
+                Logins.append(secret)
+                user = Rocket_Chat(Logins[0],Logins[1])
+                menu = Menu()
+                menu.inicia()
+                break
+            else:
+                try:
+                    self.lb["fg"]="red"
+                    self.lb["text"]="Login ou Senha não existe!"
+                except:
+                    print("erro    2")
+                    break
     def inicia(self):
         self.Tlogin.mainloop()
     
