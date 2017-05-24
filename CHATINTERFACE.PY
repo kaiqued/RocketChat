@@ -243,17 +243,14 @@ class Menu():
         self.Tassunto.title("Menu de Assuntos")
         self.Tassunto["bg"] = "light green"
         self.TextoInicio = Label (self.Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
-        self.Futebol= Button(self.Tassunto,bd=10, text='Futebol', command=self.assunto,width=9).pack(anchor="center")
-        self.Politica= Button(self.Tassunto,bd=20, text='Politica', command=self.assunto,width=9).pack(anchor="center")
-        self.Celebridades= Button(self.Tassunto,bd=30, text='Celebridades', command=self.assunto,width=9).pack(anchor="center")
-        self.Volei= Button(self.Tassunto,bd=25, text='Vôlei', command=self.assunto,width=9).pack(anchor="center")
-        self.Tecnologia= Button(self.Tassunto,bd=15, text='Tecnologia', command=self.assunto,width=9).pack(anchor="center")
-        self.Culinaria= Button(self.Tassunto,bd=5, text='Culinária', command=self.assunto,width=9).pack(anchor="center")
-
+        self.Futebol= Button(self.Tassunto,bd=10, text='Entre no Chat', command=self.Tema,width=9).pack(side=BOTTOM)
+        self.fut= Entry(self.Tassunto)
+        self.fut.pack()
         
         
-    def assunto(self):
-    
+    def Tema(self):
+        assunto= self.fut.get()
+        print(assunto)
         user = Rocket_Chat(Logins[0],Logins[1])
         jooj = Chat(Logins)
         jooj.inicia()
