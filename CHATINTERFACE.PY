@@ -17,6 +17,7 @@ from tkinter.colorchooser import *
 
 ##  CLASSE CRIAR LOGIN  ##
 
+
 class Chat(Rocket_Chat) :
     def __init__(self, Logins):
         
@@ -40,7 +41,7 @@ class Chat(Rocket_Chat) :
         self.scroll=Scrollbar(self.Chat)
         self.label = Text(self.Chat,height=200,width=200, bg= "gray")
         self.exit = Button(self.opcoes, text = "Fugir", command = self.sair, bg= "grey")
-        self.cor = Button(self.opcoes, text='Select Color', command=self.getColor)
+        self.cor = Button(self.opcoes, text='Editar texto e fundo', command=self.Edita)
         
         
         
@@ -58,16 +59,64 @@ class Chat(Rocket_Chat) :
         self.Chat.after(2000, self.atualiza)
     
     
+    def Edita(self):
+        
+        def sel():
+           size = str(var.get())
+           font = str(vari.get())
+           more = str(varia.get())
+           self.label["font"]=font, size, more
+           
+        root = Tk()
+        root["bg"]="gray"
+        
+        var = IntVar()
+        vari = StringVar()
+        varia= StringVar()
+        
+        scale = Scale( root, variable = var, cursor = "dot", from_=10, to= 100, orient=HORIZONTAL,bg = "gray")
+        scale.pack(anchor=CENTER)
+        button = Button(root, text="Atualizar",font= ('Verdana','12','italic','bold'), command=sel)
+        button.pack(side=BOTTOM)
+        
+        
+        f1=Frame(root, bg="gray")
+        f2=Frame(root, bg="gray")
+        f3=Frame(root, bg="gray")
+        
+        f1.pack(side=TOP)
+        f2.pack(side=LEFT)
+        f3.pack(side=RIGHT)
+        
+        R1 = Radiobutton(f3, text="Negrito", variable=varia, value="bold",bg = "gray")
+        R1.pack()
+        
+        R2 = Radiobutton(f3, text="Itálico", variable=varia, value="italic",bg = "gray")
+        R2.pack()
+        
+        
+        
+        R1 = Radiobutton(f2, text="Times", variable=vari, value="Times",bg = "gray")
+        R1.pack( anchor = W )
+        
+        R2 = Radiobutton(f2, text="Verdana", variable=vari, value="Verdana",bg = "gray")
+        R2.pack( anchor = W )
+        
+        corfundo=Button(root, text= "Cor do fundo",bg = "gray", command=self.getColor)
+        corfundo.pack(anchor=CENTER)
+                    
+        
+        
+        
+        
+        
+        
     def getColor(self):
         color = askcolor()
         (y,x) = color
         self.label["bg"]=x
         self.Chat["bg"]= x
         
-    
-    
-    
-    
     
     
     def Envia(self,event):
@@ -106,7 +155,7 @@ class Chat(Rocket_Chat) :
             t0t=("{0}: {1}\n".format(pessoa,mensagem))
             self.label.insert(END,t0t, 'bold_italics') 
         self.label.see("end")
-        self.Chat.after(20, self.atualiza)
+        self.Chat.after(2000, self.atualiza)
         return 0
 
     
