@@ -290,7 +290,7 @@ class Tlogin(Criar, Chat):
         self.tpassword = Label(self.Tlogin, text = "Senha: ", fg= "black", bg= "light blue")
         self.BoasVindas = Label(self.Tlogin, text="Seja bem-vindo ao Rocket Chat!", bg="light blue", width=24)
         self.username = Entry(self.Tlogin, width = 24)
-        self.password = Entry(self.Tlogin, width = 24)
+        self.password = Entry(self.Tlogin, width = 24, show= "*")
         self.Criar = Button(self.Tlogin, text="Criar", bg="light green",command=self.salva_login_senha, width=9)
         self.Entrar = Button(self.Tlogin, text="Enter", bg="light green",command=self.checa_login_senha,width=9)
         self.lb = Label(self.Tlogin, text= "", bg= "light blue")
@@ -374,7 +374,7 @@ log.inicia()
 
 
 
-''''
+"""
 
 
 ##  ARRUMAR OS NOMES DAS FUNÇÕES  ###
@@ -383,3 +383,4 @@ log.inicia()
 ##  COLOCAR O FUGIR PARA CRIAR UM NOVO MENU ###
 ##  DELETAR A TELA DE MENU QUANDO O CHAT ABRIR ###
 
+"""
