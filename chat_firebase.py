@@ -1,6 +1,4 @@
-from multiprocessing import Process
 from firebase import firebase
-from sseclient import SSEClient
 import json
 
 
@@ -21,16 +19,16 @@ class Rocket_Chat():
                 })
     
          
-    def post(self):
+    def post(self,assunto):
         # Avisa que o usuário logou
-        fb.post("rocket-messenger",
+        fb.post(assunto,
                 {"name": self.nome,
                  "message": "Joined the chat"
                 })
 
-    def send(self,mensagem):
+    def send(self,mensagem,assunto):
         self.mes=mensagem
-        fb.post("rocket-messenger",
+        fb.post(assunto,
                 {
                     "name": self.nome,
                     "message": self.mes
@@ -38,24 +36,18 @@ class Rocket_Chat():
 
 
 
-def receive():
-    reading = fb.get("https://rocket-messenger.firebaseio.com/","rocket-messenger")
+def receive(assunto):
+    reading = fb.get("https://rocket-messenger.firebaseio.com/", assunto)
     return reading
-
-
 
 
 
 '''
 #testes
 username = input("Input your username: ")
-
 user=Rocket_Chat(username)
-
 user.post()
-
 user.send()
-
 #resgata a conversa
 reading=receive()
 for x in reading:
@@ -63,6 +55,14 @@ for x in reading:
     pessoa=reading[x]["name"]
     txt=("{0}: {1}\n".format(pessoa,mensagem))
     label.insert(END,txt, 'bold_italics') 
-    
+
+
+reading = fb.get("https://rocket-messenger.firebaseio.com/",None)
+
+lista = []
+for i in range (len(reading)):
+	lista.append(reading[i])
+
+print(len(reading))
 '''
 

@@ -1,9 +1,6 @@
 from tkinter import *
-
 import os
-
 from chat_firebase import Rocket_Chat, receive
-
 from firebase import firebase
 
 clear=lambda:os.system('cls')
@@ -19,15 +16,15 @@ from tkinter.colorchooser import *
 
 
 class Chat(Rocket_Chat) :
-    def __init__(self, Logins):
-        
+    def __init__(self, Logins,assunto):
+        self.assunto=assunto
         self.Chat = Tk()
         self.Chat.title("Rocket Chat")
         self.Chat.geometry("500x600+40+40")
         self.Chat['bg'] = 'gray'
         user = Rocket_Chat(Logins[0], Logins[1])
         try:
-            user.post()
+            user.post(assunto)
         except:
             print("123")
         ## Widgets ##
@@ -36,7 +33,7 @@ class Chat(Rocket_Chat) :
         
         self.input_user = StringVar()
         self.input_field = Entry(self.Chat, text=self.input_user)
-        reading=receive()
+        reading=receive(assunto)
         self.TextoInicio = Label(self.opcoes, text = "Bem vindo ao Rocket Chat", bg = "light blue")
         self.scroll=Scrollbar(self.Chat)
         self.label = Text(self.Chat,height=200,width=200, bg= "gray")
@@ -56,7 +53,7 @@ class Chat(Rocket_Chat) :
         self.cor.pack()
         
         
-        self.Chat.after(2000, self.atualiza)
+        self.Chat.after(2000, lambda:self.atualiza(assunto))
     
     
     def Edita(self):
@@ -122,7 +119,7 @@ class Chat(Rocket_Chat) :
     def Envia(self,event):
         user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
-        reading=receive()
+        reading=receive(self.assunto)
         
         for x in reading:
             mensagem=reading[x]["message"]
@@ -132,7 +129,7 @@ class Chat(Rocket_Chat) :
         self.label.see("end")
         self.input_get = self.input_field.get()
         
-        user.send(self.input_get)
+        user.send(self.input_get,self.assunto)
         self.texto = "{0}: {1}  \n".format(user.nome, self.input_get)
         self.scroll.config(command=self.label.yview)
         self.label.configure(yscrollcommand=self.scroll.set)
@@ -145,9 +142,9 @@ class Chat(Rocket_Chat) :
 
         return "break"
 
-    def atualiza(self):
+    def atualiza(self,assunto):
         self.label.delete('1.0', END) 
-        reading=receive()
+        reading=receive(assunto)
         
         for x in reading:
             mensagem=reading[x]["message"]
@@ -155,7 +152,7 @@ class Chat(Rocket_Chat) :
             t0t=("{0}: {1}\n".format(pessoa,mensagem))
             self.label.insert(END,t0t, 'bold_italics') 
         self.label.see("end")
-        self.Chat.after(2000, self.atualiza)
+        self.Chat.after(2000, lambda: self.atualiza(assunto))
         return 0
 
     
@@ -200,25 +197,41 @@ class Criar(Rocket_Chat):
         nome = self.Nome.get()
         senha = self.Senha.get()
 
-        
+
+
     def salva(self):   
         nome = self.Nome.get()
         senha = self.Senha.get()
-        Logins.append(nome)
-        Logins.append(senha)
-        user=Rocket_Chat(Logins[0],Logins[1])
-        user.salva_data()
-        log.lb["fg"]="green"
-        log.lb["text"]="Login e senha salvos!"
-        self.acaba()
-    
+        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+        for lg in saves:
+            nome_ex=saves[lg]["name"]
+            senha_ex=saves[lg]["password"]
+            if nome==nome_ex or senha==senha_ex:
+                self.lbl["fg"]="red"
+                self.lbl["text"]="Login ou Senha já existente!"
+
+                break
+            elif nome!=nome_ex or senha!=senha_ex:
+                try:
+                    
+                    user=Rocket_Chat(nome,senha)
+                    user.salva_data()
+                    log.lb["fg"]="green"
+                    log.lb["text"]="Login e senha salvos!"
+                    self.acaba()
+                except:
+                    print("erro    2")
+                    break
+                    
+            
         
     def Enter(self,event):
+        lista=[]
         nome = self.Nome.get()
         senha = self.Senha.get()
-        Logins.append(nome)
-        Logins.append(senha)
-        user=Rocket_Chat(Logins[0],Logins[1])
+        lista.append(nome)
+        lista.append(senha)
+        user=Rocket_Chat(lista[0],lista[1])
         user.salva_data()
         log.lb["fg"]="green"
         log.lb["text"]="Login e senha salvos!"
@@ -250,9 +263,9 @@ class Menu():
         
     def Tema(self):
         assunto= self.fut.get()
-        print(assunto)
+        
         user = Rocket_Chat(Logins[0],Logins[1])
-        jooj = Chat(Logins)
+        jooj = Chat(Logins,assunto)
         jooj.inicia()
         
           
@@ -355,20 +368,18 @@ class Tlogin(Criar, Chat):
 log= Tlogin()
 log.inicia()
 
-        
-### MENU ###
 
 
 
 
 
 
+''''
 
 
+##  ARRUMAR OS NOMES DAS FUNÇÕES  ###
+##  ORGANIZAR E COMENTAR O CÓDIGO ###
+##  USAR TRY PARA PRINTAR NA TELA QUANDO A NET CAI ###
+##  COLOCAR O FUGIR PARA CRIAR UM NOVO MENU ###
+##  DELETAR A TELA DE MENU QUANDO O CHAT ABRIR ###
 
-
-
-###  TELA DO CHAT  ###
-
-
-#  CRIA A TELA  #
