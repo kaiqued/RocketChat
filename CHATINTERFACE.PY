@@ -33,6 +33,7 @@ class Chat(Rocket_Chat) :
         
         self.input_user = StringVar()
         self.input_field = Entry(self.Chat, text=self.input_user)
+        self.input_field.focus()
         reading=receive(assunto)
         self.TextoInicio = Label(self.opcoes, text = "Bem vindo ao Rocket Chat", bg = "light blue")
         self.scroll=Scrollbar(self.Chat)
@@ -55,7 +56,7 @@ class Chat(Rocket_Chat) :
         
         self.Chat.after(2000, lambda:self.atualiza(assunto))
     
-    
+    #
     def Edita(self):
         
         def sel():
@@ -107,7 +108,7 @@ class Chat(Rocket_Chat) :
         
         
         
-        
+    #    
     def getColor(self):
         color = askcolor()
         (y,x) = color
@@ -115,7 +116,7 @@ class Chat(Rocket_Chat) :
         self.Chat["bg"]= x
         
     
-    
+    #método de enviar mensagem
     def Envia(self,event):
         user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
@@ -142,6 +143,7 @@ class Chat(Rocket_Chat) :
 
         return "break"
 
+    #método refresh da tela de conversa
     def atualiza(self,assunto):
         self.label.delete('1.0', END) 
         reading=receive(assunto)
@@ -158,7 +160,10 @@ class Chat(Rocket_Chat) :
     
     
     def sair(self):
-        self.acaba()
+        menu=Menu()
+        self.Chat.destroy()
+        menu.inicia()
+        
     
     
     
@@ -171,7 +176,7 @@ class Chat(Rocket_Chat) :
         self.Chat.destroy()
 
 
-
+#classe da tela de criar conta
 
 class Criar(Rocket_Chat):
     def __init__(self):
@@ -186,56 +191,62 @@ class Criar(Rocket_Chat):
         self.Nome = Entry(self.inicial, width = 24)
         self.Senha = Entry(self.inicial, width = 24)
         Salvar = Button(self.inicial, text="Salvar", bg="red",command=self.salva, width=9)
+        self.lbl = Label(self.inicial, text= "", bg= "orange")
         self.inicial.bind("<Return>", self.Enter)
-        
+
+        self.lbl.grid(row= 5, column= 1)
         tusername.grid(row= 1, column= 0,sticky=E)
         tpassword.grid(row= 2, column= 0,sticky=E)
         BoasVindas.grid(row= 0, column= 1)
         self.Nome.grid(row= 1, column= 1)
         self.Senha.grid(row= 2, column= 1)
         Salvar.grid(row=3, column=1)
-        nome = self.Nome.get()
-        senha = self.Senha.get()
 
-
+#método que checa se a conta ja existe para criar outra
 
     def salva(self):   
-        nome = self.Nome.get()
-        senha = self.Senha.get()
+        n_nome = self.Nome.get()
+        n_senha = self.Senha.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+        answer= False
         for lg in saves:
-            nome_ex=saves[lg]["name"]
-            senha_ex=saves[lg]["password"]
-            if nome==nome_ex or senha==senha_ex:
-                self.lbl["fg"]="red"
-                self.lbl["text"]="Login ou Senha já existente!"
+            teste_n=saves[lg]["name"]
+            teste_s=saves[lg]["password"]
+            if n_nome==teste_n or n_senha==teste_s:
+                answer=True
 
-                break
-            elif nome!=nome_ex or senha!=senha_ex:
-                try:
-                    
-                    user=Rocket_Chat(nome,senha)
-                    user.salva_data()
-                    log.lb["fg"]="green"
-                    log.lb["text"]="Login e senha salvos!"
-                    self.acaba()
-                except:
-                    print("erro    2")
-                    break
+        if answer==True:
+            self.lbl["fg"]="red"
+            self.lbl["text"]="Login ou Senha já existente!"
+        elif answer==False:
+            user=Rocket_Chat(n_nome,n_senha)
+            user.salva_data()
+            log.lb["fg"]="green"
+            log.lb["text"]="Login e senha salvos!"
+            self.acaba()
                     
             
-        
+#mesmo método anterior, mas agora para quando o Enter for pressionado      
     def Enter(self,event):
-        lista=[]
-        nome = self.Nome.get()
-        senha = self.Senha.get()
-        lista.append(nome)
-        lista.append(senha)
-        user=Rocket_Chat(lista[0],lista[1])
-        user.salva_data()
-        log.lb["fg"]="green"
-        log.lb["text"]="Login e senha salvos!"
-        self.acaba()
+        n_nome = self.Nome.get()
+        n_senha = self.Senha.get()
+        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+        answer= False
+        for lg in saves:
+            teste_n=saves[lg]["name"]
+            teste_s=saves[lg]["password"]
+            if n_nome==teste_n or n_senha==teste_s:
+                answer=True
+
+        if answer==True:
+            self.lbl["fg"]="red"
+            self.lbl["text"]="Login ou Senha já existente!"
+        elif answer==False:
+            user=Rocket_Chat(n_nome,n_senha)
+            user.salva_data()
+            log.lb["fg"]="green"
+            log.lb["text"]="Login e senha salvos!"
+            self.acaba()
         
         
     
@@ -247,7 +258,7 @@ class Criar(Rocket_Chat):
         self.inicial.destroy()
     
     
-    
+#classe da tela de escolha do assunto   
 class Menu():
     def __init__(self):
         log.acaba()
@@ -256,17 +267,20 @@ class Menu():
         self.Tassunto.title("Menu de Assuntos")
         self.Tassunto["bg"] = "light green"
         self.TextoInicio = Label (self.Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
-        self.Futebol= Button(self.Tassunto,bd=10, text='Entre no Chat', command=self.Tema,width=9).pack(side=BOTTOM)
-        self.fut= Entry(self.Tassunto)
-        self.fut.pack()
+        self.entra= Button(self.Tassunto,bd=10, text='Entre no Chat', command=self.Tema,width=9).pack(side=BOTTOM)
+        self.ass= Entry(self.Tassunto)
+        self.ass.focus()
+        self.ass.pack()
         
         
     def Tema(self):
-        assunto= self.fut.get()
+        assunto= self.ass.get()
         
         user = Rocket_Chat(Logins[0],Logins[1])
-        jooj = Chat(Logins,assunto)
-        jooj.inicia()
+        
+        chat = Chat(Logins,assunto)
+        self.acaba()
+        chat.inicia()
         
           
     def inicia(self):
@@ -276,7 +290,7 @@ class Menu():
     def acaba(self):
         self.Tassunto.destroy()
     
-    
+#classe da tela de login do chat
 
 class Tlogin(Criar, Chat):
     def __init__(self):
@@ -290,6 +304,7 @@ class Tlogin(Criar, Chat):
         self.tpassword = Label(self.Tlogin, text = "Senha: ", fg= "black", bg= "light blue")
         self.BoasVindas = Label(self.Tlogin, text="Seja bem-vindo ao Rocket Chat!", bg="light blue", width=24)
         self.username = Entry(self.Tlogin, width = 24)
+        self.username.focus()
         self.password = Entry(self.Tlogin, width = 24, show= "*")
         self.Criar = Button(self.Tlogin, text="Criar", bg="light green",command=self.salva_login_senha, width=9)
         self.Entrar = Button(self.Tlogin, text="Enter", bg="light green",command=self.checa_login_senha,width=9)
@@ -309,52 +324,55 @@ class Tlogin(Criar, Chat):
     def salva_login_senha(self):   
         app = Criar()
         app.inicia()
-        
-    
-    def Enter(self, event):
-        login = self.username.get()
-        secret = self.password.get()
-        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
-        
-        for lg in saves:
-            name=saves[lg]["name"]
-            senha=saves[lg]["password"]
-            if name==login and secret==senha:
-                Logins.append(login) 
-                Logins.append(secret)
-                user = Rocket_Chat(Logins[0],Logins[1])
-                menu = Menu()
-                menu.inicia()
-               
-            else:
-                try:
-                    self.lb["fg"]="red"
-                    self.lb["text"]="Login ou Senha não existe!"
-                except:
-                    print("erro    2")
-                    
+
+    #checa se o login é existente e se usuario e senham estão certos    
     def checa_login_senha(self):
-        login = self.username.get()
+        uname = self.username.get()
         secret = self.password.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
-        
+
+        login=False
         for lg in saves:
             name=saves[lg]["name"]
             senha=saves[lg]["password"]
-            if name==login and secret==senha:
-                Logins.append(login) 
-                Logins.append(secret)
-                user = Rocket_Chat(Logins[0],Logins[1])
-                menu = Menu()
-                menu.inicia()
-                break
-            else:
-                try:
-                    self.lb["fg"]="red"
-                    self.lb["text"]="Login ou Senha não existe!"
-                except:
-                    print("erro    2")
-                    break
+            if uname==name and secret==senha:
+                login=True
+        if login==True:
+            Logins.append(uname) 
+            Logins.append(secret)
+            user = Rocket_Chat(Logins[0],Logins[1])
+            menu = Menu()
+            menu.inicia()
+
+        if login==False:
+            self.lb["fg"]="red"
+            self.lb["text"]="Login ou Senha não existe!"
+    
+    #mesmo método anterior agora pra quando se pressionar Enter
+    def Enter(self, event):
+        uname = self.username.get()
+        secret = self.password.get()
+        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+
+        login=False
+        for lg in saves:
+            name=saves[lg]["name"]
+            senha=saves[lg]["password"]
+            if uname==name and secret==senha:
+                login=True
+        if login==True:
+            Logins.append(uname) 
+            Logins.append(secret)
+            user = Rocket_Chat(Logins[0],Logins[1])
+            menu = Menu()
+            menu.inicia()
+            self.acaba()
+        elif login==False:
+            self.lb["fg"]="red"
+            self.lb["text"]="Login ou Senha não existe!"
+                        
+        
+
     def inicia(self):
         self.Tlogin.mainloop()
     
@@ -364,7 +382,7 @@ class Tlogin(Criar, Chat):
 
 
 
-
+#
 log= Tlogin()
 log.inicia()
 
@@ -377,11 +395,9 @@ log.inicia()
 """
 
 
-##  ARRUMAR OS NOMES DAS FUNÇÕES  ###
-##  ORGANIZAR E COMENTAR O CÓDIGO ###
-##  USAR TRY PARA PRINTAR NA TELA QUANDO A NET CAI ###
-##  COLOCAR O FUGIR PARA CRIAR UM NOVO MENU ###
-##  DELETAR A TELA DE MENU QUANDO O CHAT ABRIR ###
-##  APAGAR O TEXTO QUANDO APERTAR ENTER  ###
+##  ORGANIZAR E COMENTAR O CÓDIGO !!!!!!!! ###
+
+
+##  APAGAR O TEXTO QUANDO APERTAR ENTER  !!###
 
 """
