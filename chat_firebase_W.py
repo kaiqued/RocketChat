@@ -49,7 +49,7 @@ def receive(assunto):
 #função de inteligencia artificial
 def ia(mensagem):
 
-	r = requests.get("https://www.wolframcloud.com/objects/9201a182-54d4-4368-b350-72d32059ebe7?inputMsg="+ mensagem)
+	r = requests.get("https://www.wolframcloud.com/objects/8487a2a5-c138-4530-8956-8276abd13afb?inputMsg="+ mensagem)
 	listar=r.text.split(",")
 	
 	listar[2]=listar[2].replace(" ","")
@@ -57,6 +57,23 @@ def ia(mensagem):
 	listar[3]=listar[3].replace("}","")
 	listar[3]=listar[3].replace(" ","")
 	return listar
+
+
+
+
+
+#https://www.wolframcloud.com/objects/8487a2a5-c138-4530-8956-8276abd13afb?inputMsg=
+#https://www.wolframcloud.com/objects/4d9c18ca-4b88-4a50-8cea-ca2df5482c16?inputMsg=
+#
+#
+
+
+
+
+
+
+
+
 
 
 #teste

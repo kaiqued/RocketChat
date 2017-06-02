@@ -298,7 +298,7 @@ class Menu():
         chat.inicia()
           
     def Enter(self, event):
-        assunto= self.ass.get()
+        assunto= self.fut.get()
         
         user = Rocket_Chat(Logins[0],Logins[1])
         
@@ -349,49 +349,50 @@ class Tlogin(Criar, Chat):
         
     ## MÉTODO QUE CHECA SE O LOGIN E A SENHA ESTÃO CORRETOS ## 
     def Enter(self, event):
-        login = self.username.get()
+        uname = self.username.get()
         secret = self.password.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
-        
+
+        login=False
         for lg in saves:
             name=saves[lg]["name"]
             senha=saves[lg]["password"]
-            if name==login and secret==senha:
-                Logins.append(login) 
-                Logins.append(secret)
-                user = Rocket_Chat(Logins[0],Logins[1])
-                menu = Menu()
-                menu.inicia()
-               
-            else:
-                try:
-                    self.lb["fg"]="red"
-                    self.lb["text"]="Login ou Senha não existe!"
-                except:
-                    print("erro    2")
+            if uname==name and secret==senha:
+                login=True
+        if login==True:
+            Logins.append(uname) 
+            Logins.append(secret)
+            user = Rocket_Chat(Logins[0],Logins[1])
+            menu = Menu()
+            menu.inicia()
+
+        if login==False:
+            self.lb["fg"]="red"
+            self.lb["text"]="Login ou Senha não existe!"
     ## MESMO MÉTODO QUE O ANTERIOR, PORÉM COM O BOTAO
     def checa_login_senha(self):
-        login = self.username.get()
+        uname = self.username.get()
         secret = self.password.get()
         saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
-        
+
+        login=False
         for lg in saves:
             name=saves[lg]["name"]
             senha=saves[lg]["password"]
-            if name==login and secret==senha:
-                Logins.append(login) 
-                Logins.append(secret)
-                user = Rocket_Chat(Logins[0],Logins[1])
-                menu = Menu()
-                menu.inicia()
-                break
-            else:
-                try:
-                    self.lb["fg"]="red"
-                    self.lb["text"]="Login ou Senha não existe!"
-                except:
-                    print("erro    2")
-                    break
+            if uname==name and secret==senha:
+                login=True
+        if login==True:
+            Logins.append(uname) 
+            Logins.append(secret)
+            user = Rocket_Chat(Logins[0],Logins[1])
+            menu = Menu()
+            menu.inicia()
+            
+        elif login==False:
+            self.lb["fg"]="red"
+            self.lb["text"]="Login ou Senha não existe!"
+
+
     def inicia(self):
         self.Tlogin.mainloop()
     
