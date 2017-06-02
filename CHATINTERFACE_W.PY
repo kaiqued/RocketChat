@@ -23,21 +23,19 @@ class Chat(Rocket_Chat) :
         self.Chat.geometry("500x600+40+40")
         self.Chat['bg'] = 'gray'
         user = Rocket_Chat(Logins[0], Logins[1])
-        try:
-            user.post(assunto)
-        except:
-            print("123")
-        ## Widgets ##
+        user.post(assunto)
+                ## Widgets ##
         self.opcoes = Frame(self.Chat, bg= "light blue")
         self.opcoes.pack(fill=BOTH)
         
         self.input_user = StringVar()
         self.input_field = Entry(self.Chat, text=self.input_user)
+        self.input_field.focus()
         reading=receive(assunto)
         self.TextoInicio = Label(self.opcoes, text = "Bem vindo ao Rocket Chat", bg = "light blue")
         self.scroll=Scrollbar(self.Chat)
         self.label = Text(self.Chat,height=200,width=200, bg= "gray")
-        self.exit = Button(self.opcoes, text = "Fugir", command = self.sair, bg= "grey")
+        self.exit = Button(self.opcoes, text = "Menu", command = self.sair, bg= "grey")
         self.cor = Button(self.opcoes, text='Editar texto e fundo', command=self.Edita)
         
         
@@ -55,7 +53,7 @@ class Chat(Rocket_Chat) :
         
         self.Chat.after(2000, lambda:self.atualiza(assunto))
     
-    
+    ##  TELA PARA EDIÇÃO DE TEXTO  ## 
     def Edita(self):
         
         def sel():
@@ -66,7 +64,7 @@ class Chat(Rocket_Chat) :
            
         root = Tk()
         root["bg"]="gray"
-        
+        root.title("Editar")
         var = IntVar()
         vari = StringVar()
         varia= StringVar()
@@ -91,7 +89,8 @@ class Chat(Rocket_Chat) :
         R2 = Radiobutton(f3, text="Itálico", variable=varia, value="italic",bg = "gray")
         R2.pack()
         
-        
+        Rmore2= Radiobutton(f3, text="Nenhum", variable=varia, value="",bg = "gray")
+        Rmore2.pack()
         
         R1 = Radiobutton(f2, text="Times", variable=vari, value="Times",bg = "gray")
         R1.pack( anchor = W )
@@ -101,13 +100,13 @@ class Chat(Rocket_Chat) :
         
         corfundo=Button(root, text= "Cor do fundo",bg = "gray", command=self.getColor)
         corfundo.pack(anchor=CENTER)
-                    
+        root.mainloop()
         
         
         
         
         
-        
+    ##  MÉTODO DE MUDAR A COR DO FUNDO ##
     def getColor(self):
         color = askcolor()
         (y,x) = color
@@ -115,7 +114,7 @@ class Chat(Rocket_Chat) :
         self.Chat["bg"]= x
         
     
-    
+    ## MÉTODO DE ENVIAR MENSAGEM  ##
     def Envia(self,event):
         user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
@@ -152,11 +151,11 @@ class Chat(Rocket_Chat) :
         self.input_user.set('')
         self.label.insert(END,self.texto, 'bold_italics') 
         self.label.pack(side=BOTTOM)
-    
+        self.input_field.delete('0', END)
     
 
         return "break"
-
+    ## MÉTODO DE ATUALIZAR A PÁGINA AUTOMATICAMENTE ##
     def atualiza(self,assunto):
         self.label.delete('1.0', END) 
         reading=receive(assunto)
@@ -174,8 +173,9 @@ class Chat(Rocket_Chat) :
     
     
     def sair(self):
-
+        menu=Menu()
         self.Chat.destroy()
+        menu.inicia()
     
     
     
@@ -188,8 +188,7 @@ class Chat(Rocket_Chat) :
 
 
 
-
-
+##  CLASSE JANELA DE CRIAR A CONTA  ##
 class Criar(Rocket_Chat):
     def __init__(self):
         self.inicial = Tk()
@@ -217,7 +216,7 @@ class Criar(Rocket_Chat):
         senha = self.Senha.get()
 
 
-
+    ## MÉTODO QUE CHECA SE O LOGIN EXIXTE  ##
     def salva(self):   
         login = self.Nome.get()
         secret = self.Senha.get()
@@ -240,7 +239,7 @@ class Criar(Rocket_Chat):
             self.acaba()
                     
             
-        
+    ## MESMA FUNÇÃO QUE O MÉTODO SALVA, PORÉM COM O ENTER ##       
     def Enter(self,event):
         login = self.Nome.get()
         secret = self.Senha.get()
@@ -273,10 +272,13 @@ class Criar(Rocket_Chat):
         self.inicial.destroy()
     
     
-    
+##  CLASSE JANELA DE ESCOLHER O ASSUNTO  ##   
 class Menu():
     def __init__(self):
-        log.acaba()
+        try:
+            log.acaba()
+        except:
+            print('Entrou no menu')
         self.Tassunto= Tk()
         self.Tassunto.geometry("+40+40")
         self.Tassunto.title("Menu de Assuntos")
@@ -285,16 +287,25 @@ class Menu():
         self.Futebol= Button(self.Tassunto,bd=10, text='Entre no Chat', command=self.Tema,width=9).pack(side=BOTTOM)
         self.fut= Entry(self.Tassunto)
         self.fut.pack()
-        
+        self.Tassunto.bind("<Return>", self.Enter)
         
     def Tema(self):
         assunto= self.fut.get()
         
         user = Rocket_Chat(Logins[0],Logins[1])
-        jooj = Chat(Logins,assunto)
-        jooj.inicia()
-        #self.Tassunto.destroy()
+        chat = Chat(Logins,assunto)
+        self.acaba()
+        chat.inicia()
           
+    def Enter(self, event):
+        assunto= self.ass.get()
+        
+        user = Rocket_Chat(Logins[0],Logins[1])
+        
+        chat = Chat(Logins,assunto)
+        self.acaba()
+        chat.inicia()
+        
     def inicia(self):
         self.Tassunto.mainloop()
     
@@ -302,7 +313,7 @@ class Menu():
     def acaba(self):
         self.Tassunto.destroy()
     
-    
+## CLASSE JANELA DE LOGIN  ##
 
 class Tlogin(Criar, Chat):
     def __init__(self):
@@ -336,7 +347,7 @@ class Tlogin(Criar, Chat):
         app = Criar()
         app.inicia()
         
-    
+    ## MÉTODO QUE CHECA SE O LOGIN E A SENHA ESTÃO CORRETOS ## 
     def Enter(self, event):
         login = self.username.get()
         secret = self.password.get()
@@ -358,7 +369,7 @@ class Tlogin(Criar, Chat):
                     self.lb["text"]="Login ou Senha não existe!"
                 except:
                     print("erro    2")
-                    
+    ## MESMO MÉTODO QUE O ANTERIOR, PORÉM COM O BOTAO
     def checa_login_senha(self):
         login = self.username.get()
         secret = self.password.get()
@@ -396,14 +407,3 @@ log.inicia()
 
 
 
-
-
-
-
-"""
-##  ARRUMAR OS NOMES DAS FUNÇÕES  ###
-##  ORGANIZAR E COMENTAR O CÓDIGO ###
-##  COLOCAR O FUGIR PARA CRIAR UM NOVO MENU ###
-##  DELETAR A TELA DE MENU QUANDO O CHAT ABRIR ###
-##  APAGAR O TEXTO QUANDO APERTAR ENTER  ###
-"""

@@ -12,7 +12,7 @@ fb = firebase.FirebaseApplication(FIREBASE_URL,  None)
 from tkinter.colorchooser import *
 
 
-##  CLASSE CRIAR LOGIN  ##
+##  CLASSE CRIAR CHAT  ##
 
 
 class Chat(Rocket_Chat) :
@@ -23,11 +23,8 @@ class Chat(Rocket_Chat) :
         self.Chat.geometry("500x600+40+40")
         self.Chat['bg'] = 'gray'
         user = Rocket_Chat(Logins[0], Logins[1])
-        try:
-            user.post(assunto)
-        except:
-            print("123")
-        ## Widgets ##
+        user.post(assunto)
+                ## Widgets ##
         self.opcoes = Frame(self.Chat, bg= "light blue")
         self.opcoes.pack(fill=BOTH)
         
@@ -38,8 +35,8 @@ class Chat(Rocket_Chat) :
         self.TextoInicio = Label(self.opcoes, text = "Bem vindo ao Rocket Chat", bg = "light blue")
         self.scroll=Scrollbar(self.Chat)
         self.label = Text(self.Chat,height=200,width=200, bg= "gray")
-        self.exit = Button(self.opcoes, text = "Fugir", command = self.sair, bg= "grey")
-        self.cor = Button(self.opcoes, text='Editar texto e fundo', command=self.Edita)
+        self.exit = Button(self.opcoes, text = "Menu", command = self.sair, bg= "grey")
+        self.edita = Button(self.opcoes, text='Editar texto e fundo', command=self.Edita)
         
         
         
@@ -51,12 +48,12 @@ class Chat(Rocket_Chat) :
         self.input_field.pack(side=BOTTOM, fill=X)
         self.label.pack()
         self.input_field.bind("<Return>", self.Envia)
-        self.cor.pack()
+        self.edita.pack()
         
         
         self.Chat.after(2000, lambda:self.atualiza(assunto))
     
-    #
+    ##  TELA PARA EDIÇÃO DE TEXTO  ## 
     def Edita(self):
         
         def sel():
@@ -67,7 +64,7 @@ class Chat(Rocket_Chat) :
            
         root = Tk()
         root["bg"]="gray"
-        
+        root.title("Editar")
         var = IntVar()
         vari = StringVar()
         varia= StringVar()
@@ -86,29 +83,30 @@ class Chat(Rocket_Chat) :
         f2.pack(side=LEFT)
         f3.pack(side=RIGHT)
         
-        R1 = Radiobutton(f3, text="Negrito", variable=varia, value="bold",bg = "gray")
-        R1.pack()
+        Rmore = Radiobutton(f3, text="Negrito", variable=varia, value="bold",bg = "gray")
+        Rmore.pack()
         
-        R2 = Radiobutton(f3, text="Itálico", variable=varia, value="italic",bg = "gray")
-        R2.pack()
+        Rmore1= Radiobutton(f3, text="Itálico", variable=varia, value="italic",bg = "gray")
+        Rmore1.pack()
         
+        Rmore2= Radiobutton(f3, text="Nenhum", variable=varia, value="",bg = "gray")
+        Rmore2.pack()
         
+        Rfont = Radiobutton(f2, text="Times", variable=vari, value="Times",bg = "gray")
+        Rfont.pack( anchor = W )
         
-        R1 = Radiobutton(f2, text="Times", variable=vari, value="Times",bg = "gray")
-        R1.pack( anchor = W )
-        
-        R2 = Radiobutton(f2, text="Verdana", variable=vari, value="Verdana",bg = "gray")
-        R2.pack( anchor = W )
+        Rfont1= Radiobutton(f2, text="Verdana", variable=vari, value="Verdana",bg = "gray")
+        Rfont1.pack( anchor = W )
         
         corfundo=Button(root, text= "Cor do fundo",bg = "gray", command=self.getColor)
         corfundo.pack(anchor=CENTER)
-                    
+        root.mainloop()
         
         
         
         
         
-    #    
+    ##  MÉTODO DE MUDAR A COR DO FUNDO ##
     def getColor(self):
         color = askcolor()
         (y,x) = color
@@ -116,7 +114,7 @@ class Chat(Rocket_Chat) :
         self.Chat["bg"]= x
         
     
-    #método de enviar mensagem
+    ## MÉTODO DE ENVIAR MENSAGEM  ##
     def Envia(self,event):
         user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
@@ -136,14 +134,14 @@ class Chat(Rocket_Chat) :
         self.label.configure(yscrollcommand=self.scroll.set)
         self.scroll.pack(side=RIGHT, fill=Y)        
         self.input_user.set('')
-        self.label.insert(END,self.texto, 'bold_italics') 
+        self.label.insert(END,self.texto) 
         self.label.pack(side=BOTTOM)
-    
+        self.input_field.delete('0', END)
     
 
         return "break"
 
-    #método refresh da tela de conversa
+    ## MÉTODO DE ATUALIZAR A PÁGINA AUTOMATICAMENTE ##
     def atualiza(self,assunto):
         self.label.delete('1.0', END) 
         reading=receive(assunto)
@@ -176,7 +174,7 @@ class Chat(Rocket_Chat) :
         self.Chat.destroy()
 
 
-#classe da tela de criar conta
+##  CLASSE JANELA DE CRIAR A CONTA  ##
 
 class Criar(Rocket_Chat):
     def __init__(self):
@@ -202,7 +200,7 @@ class Criar(Rocket_Chat):
         self.Senha.grid(row= 2, column= 1)
         Salvar.grid(row=3, column=1)
 
-#método que checa se a conta ja existe para criar outra
+    ## MÉTODO QUE CHECA SE O LOGIN EXIXTE  ##
 
     def salva(self):   
         n_nome = self.Nome.get()
@@ -225,8 +223,7 @@ class Criar(Rocket_Chat):
             log.lb["text"]="Login e senha salvos!"
             self.acaba()
                     
-            
-#mesmo método anterior, mas agora para quando o Enter for pressionado      
+    ## MESMA FUNÇÃO QUE O MÉTODO SALVA, PORÉM COM O ENTER ##             
     def Enter(self,event):
         n_nome = self.Nome.get()
         n_senha = self.Senha.get()
@@ -258,20 +255,23 @@ class Criar(Rocket_Chat):
         self.inicial.destroy()
     
     
-#classe da tela de escolha do assunto   
+##  CLASSE JANELA DE ESCOLHER O ASSUNTO  ## 
 class Menu():
     def __init__(self):
-        log.acaba()
+        try:
+            log.acaba()
+        except:
+            print("Entrou no menu")
         self.Tassunto= Tk()
-        self.Tassunto.geometry("+40+40")
+        self.Tassunto.geometry("400x100+40+40")
         self.Tassunto.title("Menu de Assuntos")
         self.Tassunto["bg"] = "light green"
-        self.TextoInicio = Label (self.Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(anchor=NW)
+        self.TextoInicio = Label (self.Tassunto, text = "Selecione o assunto desejado:", bg = "light blue").pack(fill=X,anchor=NW)
         self.entra= Button(self.Tassunto,bd=10, text='Entre no Chat', command=self.Tema,width=9).pack(side=BOTTOM)
         self.ass= Entry(self.Tassunto)
         self.ass.focus()
         self.ass.pack()
-        
+        self.Tassunto.bind("<Return>", self.Enter)
         
     def Tema(self):
         assunto= self.ass.get()
@@ -281,7 +281,15 @@ class Menu():
         chat = Chat(Logins,assunto)
         self.acaba()
         chat.inicia()
+    
+    def Enter(self, event):
+        assunto= self.ass.get()
         
+        user = Rocket_Chat(Logins[0],Logins[1])
+        
+        chat = Chat(Logins,assunto)
+        self.acaba()
+        chat.inicia()
           
     def inicia(self):
         self.Tassunto.mainloop()
@@ -290,7 +298,7 @@ class Menu():
     def acaba(self):
         self.Tassunto.destroy()
     
-#classe da tela de login do chat
+## CLASSE JANELA DE LOGIN  ##
 
 class Tlogin(Criar, Chat):
     def __init__(self):
@@ -324,8 +332,8 @@ class Tlogin(Criar, Chat):
     def salva_login_senha(self):   
         app = Criar()
         app.inicia()
-
-    #checa se o login é existente e se usuario e senham estão certos    
+        
+    ## MÉTODO QUE CHECA SE O LOGIN E A SENHA ESTÃO CORRETOS ## 
     def checa_login_senha(self):
         uname = self.username.get()
         secret = self.password.get()
@@ -348,7 +356,7 @@ class Tlogin(Criar, Chat):
             self.lb["fg"]="red"
             self.lb["text"]="Login ou Senha não existe!"
     
-    #mesmo método anterior agora pra quando se pressionar Enter
+    ## MESMO MÉTODO QUE O ANTERIOR, PORÉM COM O ENTER ##
     def Enter(self, event):
         uname = self.username.get()
         secret = self.password.get()
@@ -382,22 +390,10 @@ class Tlogin(Criar, Chat):
 
 
 
-#
+## INICIA O CHAT ##
 log= Tlogin()
 log.inicia()
 
 
 
 
-
-
-
-"""
-
-
-##  ORGANIZAR E COMENTAR O CÓDIGO !!!!!!!! ###
-
-
-##  APAGAR O TEXTO QUANDO APERTAR ENTER  !!###
-
-"""
