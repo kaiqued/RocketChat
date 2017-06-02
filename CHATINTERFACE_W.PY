@@ -1,6 +1,6 @@
 from tkinter import *
 import os
-from chat_firebase import Rocket_Chat, receive, ia
+from chat_firebase_W import Rocket_Chat, receive, ia
 from firebase import firebase
 
 clear=lambda:os.system('cls')
@@ -120,27 +120,32 @@ class Chat(Rocket_Chat) :
         user= Rocket_Chat(Logins[0], Logins[1])
         self.label.delete('1.0', END) 
         reading=receive(self.assunto)
-        
-        '''        
-        for x in reading:
-            mensagem=reading[x]["message"]
-            pessoa=reading[x]["name"]
-            t0t=("{0}: {1}\n".format(pessoa,mensagem))
-            self.label.insert(END,t0t, 'bold_italics') 
-        '''    
+   
         self.label.see("end")
         self.input_get = self.input_field.get()
 
+        #inteligencia artificial
         chatbot=ia(self.input_get)
+        #checa se existem palavrões
+        chatbot_h="Neutro"
         if chatbot[2]>0:
-            alerta="CUIDADO, a mensagem abaixo possui {} palavras de baixo calão",chatbot[2]
-            user.send(alerta,self.assunto)  
+            alerta="CUIDADO, a mensagem abaixo possui palavras de baixo calão"
+            user.send(alerta,self.assunto,chatbot_h)  
+        '''
+        humores=["Animado!!","Pra baixo...","Normal"]
         if chatbot[3]=="Positive":
-            humor= "Animado!!"      
-        elif chatbot[3]=="Negativo":
-            humor= "Pra baixo..."   
-        user.send(self.input_get,self.assunto,humor)
-        self.texto = "{0}: {1} - humor:{2} \n".format(user.nome, self.input_get,humor)
+            user.send(self.input_get,self.assunto,humores[0])
+
+        elif chatbot[3]=="Negative":
+            user.send(self.input_get,self.assunto,humores[1])
+    
+        elif chatbot[3]=="Neutral":
+            user.send(self.input_get,self.assunto,humores[2])
+        '''
+
+        #chatbot[3] indica o sentimento da mensagem
+        user.send(self.input_get,self.assunto,chatbot[3])
+        self.texto = "{0}: {1} - humor: {2} \n".format(user.nome, self.input_get,user.humor)
         self.scroll.config(command=self.label.yview)
         self.label.configure(yscrollcommand=self.scroll.set)
         self.scroll.pack(side=RIGHT, fill=Y)        
@@ -159,7 +164,8 @@ class Chat(Rocket_Chat) :
         for x in reading:
             mensagem=reading[x]["message"]
             pessoa=reading[x]["name"]
-            t0t=("{0}: {1}\n".format(pessoa,mensagem))
+            clima=reading[x]["humor"]
+            t0t=("{0}: {1} - humor:{2} \n".format(pessoa,mensagem,clima))
             self.label.insert(END,t0t, 'bold_italics') 
         self.label.see("end")
         self.Chat.after(2000, lambda: self.atualiza(assunto))
@@ -236,16 +242,26 @@ class Criar(Rocket_Chat):
             
         
     def Enter(self,event):
-        lista=[]
-        nome = self.Nome.get()
-        senha = self.Senha.get()
-        lista.append(nome)
-        lista.append(senha)
-        user=Rocket_Chat(lista[0],lista[1])
-        user.salva_data()
-        log.lb["fg"]="green"
-        log.lb["text"]="Login e senha salvos!"
-        self.acaba()
+        login = self.Nome.get()
+        secret = self.Senha.get()
+        saves = fb.get("https://rocket-messenger.firebaseio.com/","data")
+        answer= False
+        for lg in saves:
+            name=saves[lg]["name"]
+            senha=saves[lg]["password"]
+            if login==name or secret==senha:
+                answer=True
+
+        if answer==True:
+            self.lbl["fg"]="red"
+            self.lbl["text"]="Login ou Senha já existente!"
+        if answer==False:
+            user=Rocket_Chat(login,secret)
+            user.salva_data()
+            log.lb["fg"]="green"
+            log.lb["text"]="Login e senha salvos!"
+            self.acaba()
+                    
         
         
     
